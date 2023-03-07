@@ -71,15 +71,20 @@ def on_tick(context,tick):
         if tick.quotes[0]['bid_p'] > position.vwap+0.001:
             print(tick.created_at,"卖出",tick.quotes[0]['bid_p']+0.001)
             order_volume(symbol='SHSE.513050', volume=20000, side=OrderSide_Sell, order_type=OrderType_Limit, position_effect=PositionEffect_Close,price=tick.quotes[0]['bid_p']+0.001)
+        # 不持仓过夜
         return
-    
+    # 时间判断 14:40 之后就不买了
+    print(tick.created_at)
+    print(datetime.datetime.today().replace(hour=15, minute=0, second=0, microsecond=0))
 
+    if tick.created_at < datetime.datetime.today().replace(hour=15, minute=0, second=0, microsecond=0):
+        return 
+    
+     
     if len(high) > 15 :
         k,d,j = KDJ(pd.Series(high+[max]),pd.Series(low+[min]),pd.Series(close+[tick.price]))
-        # k 和 d 收敛,d 大于 k 慢慢收敛
+        # k 和 d 收敛,d 大于 k 
         if abs(k.iloc[-1] - d.iloc[-1]) <=0.5:
-            # 两者的差值
-            print(k.iloc[-1] , d.iloc[-1],tick.created_at)
             kgtdc+=1
         if  kgtdc > 1 and bardk > 2:
             # 买进

@@ -30,7 +30,6 @@ def buy_signal(list1,list2):
         
     return dayuLow>=4
 
-import talib
 import numpy as np
 import pandas as pd
 def MACD_CN(close,  fast_period=12, slow_period=26, signal_period=9):
